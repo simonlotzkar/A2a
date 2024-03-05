@@ -76,48 +76,26 @@ public class World {
             if (steps == 1) {
                 int magnitude = m.getMovement().getSteps()[0] * m.getMagnitude();
 
-                if (isValidPosition(row + magnitude, col)) {
-                    validDestinations.add(cells[row + magnitude][col]);
-                }
-                if (isValidPosition(row - magnitude, col)) {
-                    validDestinations.add(cells[row - magnitude][col]);
-                }
-                if (isValidPosition(row, col + magnitude)) {
-                    validDestinations.add(cells[row][col + magnitude]);
-                }
-                if (isValidPosition(row, col - magnitude)) {
-                    validDestinations.add(cells[row][col - magnitude]);
+                for (int i = -1; i <= 1; i += 2) {
+                    if (isValidPosition(row + magnitude * i, col)) {
+                        validDestinations.add(cells[row + magnitude * i][col]);
+                    }
+                    if (isValidPosition(row, col + magnitude * i)) {
+                        validDestinations.add(cells[row][col + magnitude * i]);
+                    }
                 }
             } else if (steps == 2) {
                 int magnitude0 = m.getMovement().getSteps()[0] * m.getMagnitude();
                 int magnitude1 = m.getMovement().getSteps()[1] * m.getMagnitude();
 
-                if (isValidPosition(row + magnitude0, col + magnitude1)) {
-                    validDestinations.add(cells[row + magnitude0][col + magnitude1]);
-                }
-                if (isValidPosition(row + magnitude0, col - magnitude1)) {
-                    validDestinations.add(cells[row + magnitude0][col - magnitude1]);
-                }
-
-                if (isValidPosition(row - magnitude0, col + magnitude1)) {
-                    validDestinations.add(cells[row - magnitude0][col + magnitude1]);
-                }
-                if (isValidPosition(row - magnitude0, col - magnitude1)) {
-                    validDestinations.add(cells[row - magnitude0][col - magnitude1]);
-                }
-
-                if (isValidPosition(row + magnitude1, col + magnitude0)) {
-                    validDestinations.add(cells[row + magnitude1][col + magnitude0]);
-                }
-                if (isValidPosition(row - magnitude1, col + magnitude0)) {
-                    validDestinations.add(cells[row - magnitude1][col + magnitude0]);
-                }
-
-                if (isValidPosition(row + magnitude1, col - magnitude0)) {
-                    validDestinations.add(cells[row + magnitude1][col - magnitude0]);
-                }
-                if (isValidPosition(row - magnitude1, col - magnitude0)) {
-                    validDestinations.add(cells[row - magnitude1][col - magnitude0]);
+                for (int magnitude : new int[]{magnitude0, -magnitude0, magnitude1, -magnitude1}) {
+                    for (int magnitudeOther : new int[]{magnitude0, -magnitude0, magnitude1, -magnitude1}) {
+                        if (magnitude != 0 && magnitudeOther != 0) {
+                            if (isValidPosition(row + magnitude, col + magnitudeOther)) {
+                                validDestinations.add(cells[row + magnitude][col + magnitudeOther]);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -130,14 +108,46 @@ public class World {
     // cell lifeform's eat() function with the chosen destination's contents. then calls fill() on the destination
     // cell using the lifeform in the original cell. then calls clear() on the original cell.
     public void moveAll(int times) {
-        // stub
+        int index = 0;
+        while (index <= times) {
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    Cell cell = cells[i][j];
+                    Lifeform lifeform = cell.getLifeform();
+                    if (lifeform != null) {
+                        Cell[] validMoves = findValidMoves(cell);
+                        int validMovesLength = validMoves.length;
+                        if (validMovesLength > 0) {
+                            int number = RandomGenerator.nextNumber(validMovesLength);
+                            lifeform.eat(validMoves[number].getLifeform());
+                            validMoves[number].fill(lifeform);
+                            cell.clear();
+                        }
+                    }
+                }
+            }
+
+            index++;
+        }
     }
 
     // uses the cell's lifeform's getMoves(), then iterates over each and adds the cells in the array returned by
     // findDestinations(cell, moves). next, if any of those cells contains a lifeform, they must also pass the
     // original lifeform's validateEdible(lifeform).
     private Cell[] findValidMoves(Cell cell) {
-        return null; //stub
+        Lifeform lifeform = cell.getLifeform();
+        ArrayList<Cell> validDestinations = new ArrayList<>();
+        Move[] moves = lifeform.getMoves();
+        if (moves != null) {
+            Set<Cell> destinations = findDestinations(cell, moves);
+            for (Cell destination : destinations) {
+                if (lifeform.validateEdible(destination.getLifeform())) {
+                    validDestinations.add(destination);
+                }
+            }
+        }
+
+        return validDestinations.toArray(new Cell[0]);
     }
 
     // iterates through each cell times times and if it has a lifeform, calls findValidReproduces(cell) then picks one
