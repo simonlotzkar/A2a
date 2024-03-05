@@ -1,4 +1,6 @@
 public abstract class Lifeform {
+    protected static int idNumber = 0;
+    protected String id;
     protected int hunger;
     protected int hungerMax;
     protected int hungerRate;
@@ -23,4 +25,8 @@ public abstract class Lifeform {
     public abstract boolean isSame(Lifeform lifeform);
 
     public abstract Lifeform createCopy();
+
+    public String getID() {
+        return id;
+    }
 }

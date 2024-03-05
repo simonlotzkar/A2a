@@ -4,6 +4,8 @@ public class Plant extends Lifeform implements Herbedible {
         reproduceMoves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
         reproduceMates = 4;
         reproduceSpace = 3;
+        id = idNumber + "P";
+        idNumber++;
     }
 
     @Override
@@ -23,7 +25,7 @@ public class Plant extends Lifeform implements Herbedible {
 
     @Override
     public boolean validateReproduce(int mates, int space) {
-        return mates == reproduceMates && space >= reproduceSpace;
+        return mates >= reproduceMates && space >= reproduceSpace;
     }
 
     @Override

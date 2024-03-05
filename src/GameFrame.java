@@ -21,11 +21,8 @@ public class GameFrame extends JFrame {
                 super.mouseClicked(e);
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     game.nextTurn(1);
+                    updateDisplay();
                 }
-                else if (SwingUtilities.isRightMouseButton(e)) {
-                    game.nextTurn(2);
-                }
-                updateDisplay();
             }
         });
     }
@@ -51,7 +48,6 @@ public class GameFrame extends JFrame {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 panels[i][j].updatePanel(world.getCells()[i][j]);
-//                panels[i][j].addLabel("" + (i * height + j));
             }
         }
         repaint();

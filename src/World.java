@@ -72,30 +72,60 @@ public class World {
         }
 
         for (Move m : moves) {
-            int steps = m.getMovement().getSteps().length;
-            if (steps == 1) {
-                int magnitude = m.getMovement().getSteps()[0] * m.getMagnitude();
+            int stepLength = m.getMovement().getSteps().length;
+            if (stepLength == 1) {
+                int step = m.getMovement().getSteps()[0] * m.getMagnitude();
 
-                for (int i = -1; i <= 1; i += 2) {
-                    if (isValidPosition(row + magnitude * i, col)) {
-                        validDestinations.add(cells[row + magnitude * i][col]);
-                    }
-                    if (isValidPosition(row, col + magnitude * i)) {
-                        validDestinations.add(cells[row][col + magnitude * i]);
-                    }
+                // +X
+                if (isWithinWorld(row + step, col)) {
+                    validDestinations.add(cells[row + step][col]);
                 }
-            } else if (steps == 2) {
-                int magnitude0 = m.getMovement().getSteps()[0] * m.getMagnitude();
-                int magnitude1 = m.getMovement().getSteps()[1] * m.getMagnitude();
+                // -X
+                if (isWithinWorld(row - step, col)) {
+                    validDestinations.add(cells[row - step][col]);
+                }
+                // +Y
+                if (isWithinWorld(row, col + step)) {
+                    validDestinations.add(cells[row][col + step]);
+                }
+                // -Y
+                if (isWithinWorld(row, col - step)) {
+                    validDestinations.add(cells[row][col - step]);
+                }
+            } else if (stepLength == 2) {
+                int step0 = m.getMovement().getSteps()[0] * m.getMagnitude();
+                int step1 = m.getMovement().getSteps()[1] * m.getMagnitude();
 
-                for (int magnitude : new int[]{magnitude0, -magnitude0, magnitude1, -magnitude1}) {
-                    for (int magnitudeOther : new int[]{magnitude0, -magnitude0, magnitude1, -magnitude1}) {
-                        if (magnitude != 0 && magnitudeOther != 0) {
-                            if (isValidPosition(row + magnitude, col + magnitudeOther)) {
-                                validDestinations.add(cells[row + magnitude][col + magnitudeOther]);
-                            }
-                        }
-                    }
+                // +X, +/- Y
+                if (isWithinWorld(row + step0, col + step1)) {
+                    validDestinations.add(cells[row + step0][col + step1]);
+                }
+                if (isWithinWorld(row + step0, col - step1)) {
+                    validDestinations.add(cells[row + step0][col - step1]);
+                }
+
+                // -X, +/- Y
+                if (isWithinWorld(row - step0, col + step1)) {
+                    validDestinations.add(cells[row - step0][col + step1]);
+                }
+                if (isWithinWorld(row - step0, col - step1)) {
+                    validDestinations.add(cells[row - step0][col - step1]);
+                }
+
+                // +Y, +/- X
+                if (isWithinWorld(row + step1, col + step0)) {
+                    validDestinations.add(cells[row + step1][col + step0]);
+                }
+                if (isWithinWorld(row - step1, col + step0)) {
+                    validDestinations.add(cells[row - step1][col + step0]);
+                }
+
+                // -Y, +/- X
+                if (isWithinWorld(row + step1, col - step0)) {
+                    validDestinations.add(cells[row + step1][col - step0]);
+                }
+                if (isWithinWorld(row - step1, col - step0)) {
+                    validDestinations.add(cells[row - step1][col - step0]);
                 }
             }
         }
@@ -109,19 +139,35 @@ public class World {
     // cell using the lifeform in the original cell. then calls clear() on the original cell.
     public void moveAll(int times) {
         int index = 0;
-        while (index <= times) {
+        while (index < times) {
+//            System.out.print("\n===========MOVING CELLS===========\n");
+            Set<Lifeform> lifeformsThatMoved = new HashSet<>();
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     Cell cell = cells[i][j];
                     Lifeform lifeform = cell.getLifeform();
-                    if (lifeform != null) {
+                    if (lifeform != null && !lifeformsThatMoved.contains(lifeform)) {
+//                        System.out.print("\nMoves for cell["+lifeform.getID()+"]("+j+","+i+"):");
                         Cell[] validMoves = findValidMoves(cell);
+
+//                        for (Cell c : validMoves) {
+//                            for (int ii = 0; ii < height; ii++) {
+//                                for (int jj = 0; jj < width; jj++) {
+//                                    if (cells[ii][jj] == c) {
+//                                        System.out.print(" ("+jj+","+ii+")");
+//                                    }
+//                                }
+//                            }
+//                        }
+
                         int validMovesLength = validMoves.length;
                         if (validMovesLength > 0) {
                             int number = RandomGenerator.nextNumber(validMovesLength);
+//                            System.out.print("... chose #" + (number+1));
                             lifeform.eat(validMoves[number].getLifeform());
                             validMoves[number].fill(lifeform);
                             cell.clear();
+                            lifeformsThatMoved.add(lifeform);
                         }
                     }
                 }
@@ -155,17 +201,35 @@ public class World {
     // the cell.
     public void reproduceAll(int times) {
         int index = 0;
-        while (index <= times) {
+        while (index < times) {
+//            System.out.print("\n===========REPRODUCING CELLS===========\n");
+            Set<Lifeform> lifeformsThatReproduced = new HashSet<>();
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     Cell cell = cells[i][j];
                     Lifeform lifeform = cell.getLifeform();
-                    if (lifeform != null) {
+                    if (lifeform != null && !lifeformsThatReproduced.contains(lifeform)) {
+//                        System.out.print("\nReproduces for cell["+lifeform.getID()+"]("+j+","+i+"):");
                         Cell[] validReproduces = findValidReproduces(cell);
+
+//                        for (Cell c : validReproduces) {
+//                            for (int ii = 0; ii < height; ii++) {
+//                                for (int jj = 0; jj < width; jj++) {
+//                                    if (cells[ii][jj] == c) {
+//                                        System.out.print(" ("+jj+","+ii+")");
+//                                    }
+//                                }
+//                            }
+//                        }
+
                         int validReproducesLength = validReproduces.length;
                         if (validReproducesLength > 0) {
                             int number = RandomGenerator.nextNumber(validReproducesLength);
-                            validReproduces[number].fill(lifeform.createCopy());
+//                            System.out.print("... chose #" + (number+1));
+                            Lifeform newLifeform = lifeform.createCopy();
+                            validReproduces[number].fill(newLifeform);
+                            lifeformsThatReproduced.add(newLifeform);
+                            lifeformsThatReproduced.add(lifeform);
                         }
                     }
                 }
@@ -202,12 +266,10 @@ public class World {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (cells[i][j] == cell) {
-                    int comparisonCol = j + 1;
-                    int comparisonRow = i - 1;
                     for (int k = -1; k < 2; k++) {
                         for (int p = -1; p < 2; p++) {
-                            if (!(k == 0 && p == 0) && isValidPosition(comparisonRow + k, comparisonCol + p)) {
-                                Lifeform lifeform = cells[comparisonRow + k][comparisonCol + p].getLifeform();
+                            if (!(k == 0 && p == 0) && isWithinWorld(i + k, j + p)) {
+                                Lifeform lifeform = cells[i + k][j + p].getLifeform();
                                 if (mode == 0) {
                                     if (cell.getLifeform().isSame(lifeform)) {
                                         count++;
@@ -226,7 +288,7 @@ public class World {
         return count;
     }
 
-    private boolean isValidPosition(int row, int col) {
+    private boolean isWithinWorld(int row, int col) {
         return (row >= 0 && col >= 0 && row < height && col < width);
     }
 }

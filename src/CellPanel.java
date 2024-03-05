@@ -3,8 +3,12 @@ import java.awt.*;
 
 public class CellPanel extends JPanel {
 
+    JLabel jLabel = new JLabel();
+
     public CellPanel() {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        add(jLabel);
+        jLabel.setVisible(false);
     }
 
     public void updatePanel(Cell cell) {
@@ -15,11 +19,11 @@ public class CellPanel extends JPanel {
             setBackground(Color.YELLOW);
         } else {
             setBackground(Color.WHITE);
+            jLabel.setVisible(false);
+            return;
         }
-    }
 
-    public void addLabel(String string) {
-        JLabel jLabel = new JLabel(string);
-        this.add(jLabel);
+        jLabel.setText(lifeform.getID());
+        jLabel.setVisible(true);
     }
 }
