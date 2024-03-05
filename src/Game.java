@@ -13,7 +13,7 @@ public class Game {
         ageAll(times);
         this.world.moveAll(times);
         this.world.reproduceAll(times);
-        System.out.println("Turn increased " + times + " times. Turn = " + turn);
+//        System.out.println("Turn increased " + times + " times. Turn = " + turn);
     }
 
     // calls the world's getAllCells() then iterates through each cell times times and calls their ageAndValidate()

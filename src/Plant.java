@@ -25,4 +25,14 @@ public class Plant extends Lifeform implements Herbedible {
     public boolean validateReproduce(int mates, int space) {
         return mates == reproduceMates && space >= reproduceSpace;
     }
+
+    @Override
+    public boolean isSame(Lifeform lifeform) {
+        return lifeform instanceof Plant;
+    }
+
+    @Override
+    public Lifeform createCopy() {
+        return new Plant();
+    }
 }

@@ -30,4 +30,14 @@ public class Herbivore extends Lifeform {
     public boolean validateReproduce(int mates, int space) {
         return false; //herbivores dont reproduce
     }
+
+    @Override
+    public boolean isSame(Lifeform lifeform) {
+        return lifeform instanceof Herbivore;
+    }
+
+    @Override
+    public Lifeform createCopy() {
+        return new Herbivore();
+    }
 }

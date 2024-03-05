@@ -19,4 +19,8 @@ public abstract class Lifeform {
     public Move[] getReproduceMoves() {
         return this.reproduceMoves;
     }
+
+    public abstract boolean isSame(Lifeform lifeform);
+
+    public abstract Lifeform createCopy();
 }

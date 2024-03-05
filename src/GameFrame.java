@@ -51,7 +51,7 @@ public class GameFrame extends JFrame {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 panels[i][j].updatePanel(world.getCells()[i][j]);
-                panels[i][j].addLabel("" + (i * height + j));
+//                panels[i][j].addLabel("" + (i * height + j));
             }
         }
         repaint();
