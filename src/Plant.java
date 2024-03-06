@@ -2,25 +2,29 @@ public class Plant extends Lifeform implements Herbedible {
 
     public Plant() {
         reproduceMoves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
-        reproduceMates = 4;
+        reproduceMates = 3;
         reproduceSpace = 3;
-        id = idNumber + "P";
+        if (idNumber > 999) {
+            id = idNumber + "";
+        } else {
+            id = idNumber + "P";
+        }
         idNumber++;
     }
 
     @Override
     public boolean ageAndValidate() {
-        return true; //plants dont age
+        return true;
     }
 
     @Override
     public boolean validateEdible(Lifeform food) {
-        return false; //plants dont eat
+        return false;
     }
 
     @Override
     public void eat(Lifeform food) {
-        //plants dont eat
+
     }
 
     @Override
@@ -36,5 +40,10 @@ public class Plant extends Lifeform implements Herbedible {
     @Override
     public Lifeform createCopy() {
         return new Plant();
+    }
+
+    @Override
+    public Cell chooseMove(Cell[] options) {
+        return null;
     }
 }

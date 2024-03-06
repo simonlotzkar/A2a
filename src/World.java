@@ -36,25 +36,11 @@ public class World {
     public Cell[] getCellsArray() {
         Cell[] cells1D = new Cell[width * height];
         int index = 0;
-
         for (int i = 0; i < height; i++) {
             System.arraycopy(cells[i], 0, cells1D, index, width);
             index += width;
         }
-
         return cells1D;
-    }
-
-    public Cell[][] getCells() {
-        return cells;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     // finds each cell that is (x+/-n or y+/-n) away from the current cell, where n is the first entry in a move's
@@ -71,12 +57,10 @@ public class World {
                 }
             }
         }
-
         for (Move m : moves) {
             int stepLength = m.getMovement().getSteps().length;
             if (stepLength == 1) {
                 int step = m.getMovement().getSteps()[0] * m.getMagnitude();
-
                 for (int i = -1; i < 2; i++) {
                     if (i != 0) {
                         if (isWithinWorld(row + step * i, col)) {
@@ -90,7 +74,6 @@ public class World {
             } else if (stepLength == 2) {
                 int step0 = m.getMovement().getSteps()[0] * m.getMagnitude();
                 int step1 = m.getMovement().getSteps()[1] * m.getMagnitude();
-
                 for (int i = -1; i < 2; i++) {
                     for (int j = -1; j < 2; j++) {
                         if (i != 0 && j != 0) {
@@ -105,7 +88,6 @@ public class World {
                 }
             }
         }
-
         return validDestinations;
     }
 
@@ -115,25 +97,17 @@ public class World {
     // cell using the lifeform in the original cell. then calls clear() on the original cell.
     public void moveAll() {
         Set<Lifeform> lifeformsThatMoved = new HashSet<>();
-
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-
                 Cell cell = cells[i][j];
                 Lifeform lifeform = cell.getLifeform();
-
                 if (lifeform != null && !lifeformsThatMoved.contains(lifeform)) {
-
                     Cell[] validMoves = findValidMoves(cell);
-                    int validMovesLength = validMoves.length;
-
-                    if (validMovesLength > 0) {
-
-                        int number = RandomGenerator.nextNumber(validMovesLength);
-                        lifeform.eat(validMoves[number].getLifeform());
-                        validMoves[number].fill(lifeform);
+                    if (validMoves.length > 0) {
+                        Cell move = lifeform.chooseMove(validMoves);
+                        lifeform.eat(move.getLifeform());
+                        move.fill(lifeform);
                         cell.clear();
-
                         lifeformsThatMoved.add(lifeform);
                     }
                 }
@@ -156,7 +130,6 @@ public class World {
                 }
             }
         }
-
         return validDestinations.toArray(new Cell[0]);
     }
 
@@ -165,24 +138,17 @@ public class World {
     // the cell.
     public void reproduceAll() {
         Set<Lifeform> lifeformsThatReproduced = new HashSet<>();
-
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-
                 Cell cell = cells[i][j];
                 Lifeform lifeform = cell.getLifeform();
-
                 if (lifeform != null && !lifeformsThatReproduced.contains(lifeform)) {
-
                     Cell[] validReproduces = findValidReproduces(cell);
                     int validReproducesLength = validReproduces.length;
-
                     if (validReproducesLength > 0) {
-
                         int number = RandomGenerator.nextNumber(validReproducesLength);
                         Lifeform newLifeform = lifeform.createCopy();
                         validReproduces[number].fill(newLifeform);
-
                         lifeformsThatReproduced.add(newLifeform);
                         lifeformsThatReproduced.add(lifeform);
                     }
@@ -242,5 +208,17 @@ public class World {
 
     private boolean isWithinWorld(int row, int col) {
         return (row >= 0 && col >= 0 && row < height && col < width);
+    }
+
+    public Cell[][] getCells() {
+        return cells;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

@@ -1,10 +1,16 @@
+import java.util.ArrayList;
+
 public class Herbivore extends Lifeform {
 
     public Herbivore() {
         hungerMax = 5;
         hungerRate = 1;
-        moves = new Move[]{new Move(Movement.ADJACENT, 1)};
-        id = idNumber + "H";
+        moves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
+        if (idNumber > 999) {
+            id = idNumber + "";
+        } else {
+            id = idNumber + "H";
+        }
         idNumber++;
     }
 
@@ -30,7 +36,7 @@ public class Herbivore extends Lifeform {
 
     @Override
     public boolean validateReproduce(int mates, int space) {
-        return false; //herbivores dont reproduce
+        return false;
     }
 
     @Override
@@ -41,5 +47,23 @@ public class Herbivore extends Lifeform {
     @Override
     public Lifeform createCopy() {
         return new Herbivore();
+    }
+
+    @Override
+    public Cell chooseMove(Cell[] options) {
+        ArrayList<Cell> others = new ArrayList<>();
+        ArrayList<Cell> herbedibles = new ArrayList<>();
+        for (Cell c : options) {
+            if (c.getLifeform() instanceof Herbedible) {
+                herbedibles.add(c);
+            } else {
+                others.add(c);
+            }
+        }
+        if (!herbedibles.isEmpty()) {
+            return herbedibles.get(RandomGenerator.nextNumber(herbedibles.size()));
+        } else {
+            return others.get(RandomGenerator.nextNumber(others.size()));
+        }
     }
 }

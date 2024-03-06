@@ -29,4 +29,6 @@ public abstract class Lifeform {
     public String getID() {
         return id;
     }
+
+    public abstract Cell chooseMove(Cell[] options);
 }
