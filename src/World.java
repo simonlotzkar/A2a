@@ -77,56 +77,31 @@ public class World {
             if (stepLength == 1) {
                 int step = m.getMovement().getSteps()[0] * m.getMagnitude();
 
-                // +X
-                if (isWithinWorld(row + step, col)) {
-                    validDestinations.add(cells[row + step][col]);
-                }
-                // -X
-                if (isWithinWorld(row - step, col)) {
-                    validDestinations.add(cells[row - step][col]);
-                }
-                // +Y
-                if (isWithinWorld(row, col + step)) {
-                    validDestinations.add(cells[row][col + step]);
-                }
-                // -Y
-                if (isWithinWorld(row, col - step)) {
-                    validDestinations.add(cells[row][col - step]);
+                for (int i = -1; i < 2; i++) {
+                    if (i != 0) {
+                        if (isWithinWorld(row + step * i, col)) {
+                            validDestinations.add(cells[row + step * i][col]);
+                        }
+                        if (isWithinWorld(row, col + step * i)) {
+                            validDestinations.add(cells[row][col + step * i]);
+                        }
+                    }
                 }
             } else if (stepLength == 2) {
                 int step0 = m.getMovement().getSteps()[0] * m.getMagnitude();
                 int step1 = m.getMovement().getSteps()[1] * m.getMagnitude();
 
-                // +X, +/- Y
-                if (isWithinWorld(row + step0, col + step1)) {
-                    validDestinations.add(cells[row + step0][col + step1]);
-                }
-                if (isWithinWorld(row + step0, col - step1)) {
-                    validDestinations.add(cells[row + step0][col - step1]);
-                }
-
-                // -X, +/- Y
-                if (isWithinWorld(row - step0, col + step1)) {
-                    validDestinations.add(cells[row - step0][col + step1]);
-                }
-                if (isWithinWorld(row - step0, col - step1)) {
-                    validDestinations.add(cells[row - step0][col - step1]);
-                }
-
-                // +Y, +/- X
-                if (isWithinWorld(row + step1, col + step0)) {
-                    validDestinations.add(cells[row + step1][col + step0]);
-                }
-                if (isWithinWorld(row - step1, col + step0)) {
-                    validDestinations.add(cells[row - step1][col + step0]);
-                }
-
-                // -Y, +/- X
-                if (isWithinWorld(row + step1, col - step0)) {
-                    validDestinations.add(cells[row + step1][col - step0]);
-                }
-                if (isWithinWorld(row - step1, col - step0)) {
-                    validDestinations.add(cells[row - step1][col - step0]);
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
+                        if (i != 0 && j != 0) {
+                            if (isWithinWorld(row + step0 * i, col + step1 * j)) {
+                                validDestinations.add(cells[row + step0 * i][col + step1 * j]);
+                            }
+                            if (isWithinWorld(row + step1 * j, col + step0 * i)) {
+                                validDestinations.add(cells[row + step1 * j][col + step0 * i]);
+                            }
+                        }
+                    }
                 }
             }
         }
