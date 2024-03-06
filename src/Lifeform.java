@@ -9,7 +9,7 @@ public abstract class Lifeform {
     protected int reproduceMates;
     protected int reproduceSpace;
 
-    public abstract boolean ageAndValidate(int times);
+    public abstract boolean ageAndValidate();
     public abstract boolean validateEdible(Lifeform food);
     public abstract void eat(Lifeform food);
     public abstract boolean validateReproduce(int mates, int space);

@@ -4,14 +4,14 @@ public class Herbivore extends Lifeform {
         hungerMax = 5;
         hungerRate = 1;
         moves = new Move[]{new Move(Movement.ADJACENT, 1)};
-        id = idNumber + "H";
+        id = idNumber + "";
         idNumber++;
     }
 
     //increments hunger by hungerRate. if hunger >= hungerMax, returns false; otherwise true.
     @Override
-    public boolean ageAndValidate(int times) {
-        hunger += hungerRate * times;
+    public boolean ageAndValidate() {
+        hunger += hungerRate;
         return !(hunger >= hungerMax);
     }
 

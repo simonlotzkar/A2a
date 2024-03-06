@@ -137,43 +137,31 @@ public class World {
     // then, uses RandomGenerator to pick a random cell in the array of valid destinations. then calls the original
     // cell lifeform's eat() function with the chosen destination's contents. then calls fill() on the destination
     // cell using the lifeform in the original cell. then calls clear() on the original cell.
-    public void moveAll(int times) {
-        int index = 0;
-        while (index < times) {
-//            System.out.print("\n===========MOVING CELLS===========\n");
-            Set<Lifeform> lifeformsThatMoved = new HashSet<>();
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    Cell cell = cells[i][j];
-                    Lifeform lifeform = cell.getLifeform();
-                    if (lifeform != null && !lifeformsThatMoved.contains(lifeform)) {
-//                        System.out.print("\nMoves for cell["+lifeform.getID()+"]("+j+","+i+"):");
-                        Cell[] validMoves = findValidMoves(cell);
+    public void moveAll() {
+        Set<Lifeform> lifeformsThatMoved = new HashSet<>();
 
-//                        for (Cell c : validMoves) {
-//                            for (int ii = 0; ii < height; ii++) {
-//                                for (int jj = 0; jj < width; jj++) {
-//                                    if (cells[ii][jj] == c) {
-//                                        System.out.print(" ("+jj+","+ii+")");
-//                                    }
-//                                }
-//                            }
-//                        }
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
 
-                        int validMovesLength = validMoves.length;
-                        if (validMovesLength > 0) {
-                            int number = RandomGenerator.nextNumber(validMovesLength);
-//                            System.out.print("... chose #" + (number+1));
-                            lifeform.eat(validMoves[number].getLifeform());
-                            validMoves[number].fill(lifeform);
-                            cell.clear();
-                            lifeformsThatMoved.add(lifeform);
-                        }
+                Cell cell = cells[i][j];
+                Lifeform lifeform = cell.getLifeform();
+
+                if (lifeform != null && !lifeformsThatMoved.contains(lifeform)) {
+
+                    Cell[] validMoves = findValidMoves(cell);
+                    int validMovesLength = validMoves.length;
+
+                    if (validMovesLength > 0) {
+
+                        int number = RandomGenerator.nextNumber(validMovesLength);
+                        lifeform.eat(validMoves[number].getLifeform());
+                        validMoves[number].fill(lifeform);
+                        cell.clear();
+
+                        lifeformsThatMoved.add(lifeform);
                     }
                 }
             }
-
-            index++;
         }
     }
 
@@ -199,43 +187,31 @@ public class World {
     // iterates through each cell times times and if it has a lifeform, calls findValidReproduces(cell) then picks one
     // randomly using randomnumber generator. then calls fill(lifeform) on that cell where lifeform is the same type as
     // the cell.
-    public void reproduceAll(int times) {
-        int index = 0;
-        while (index < times) {
-//            System.out.print("\n===========REPRODUCING CELLS===========\n");
-            Set<Lifeform> lifeformsThatReproduced = new HashSet<>();
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    Cell cell = cells[i][j];
-                    Lifeform lifeform = cell.getLifeform();
-                    if (lifeform != null && !lifeformsThatReproduced.contains(lifeform)) {
-//                        System.out.print("\nReproduces for cell["+lifeform.getID()+"]("+j+","+i+"):");
-                        Cell[] validReproduces = findValidReproduces(cell);
+    public void reproduceAll() {
+        Set<Lifeform> lifeformsThatReproduced = new HashSet<>();
 
-//                        for (Cell c : validReproduces) {
-//                            for (int ii = 0; ii < height; ii++) {
-//                                for (int jj = 0; jj < width; jj++) {
-//                                    if (cells[ii][jj] == c) {
-//                                        System.out.print(" ("+jj+","+ii+")");
-//                                    }
-//                                }
-//                            }
-//                        }
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
 
-                        int validReproducesLength = validReproduces.length;
-                        if (validReproducesLength > 0) {
-                            int number = RandomGenerator.nextNumber(validReproducesLength);
-//                            System.out.print("... chose #" + (number+1));
-                            Lifeform newLifeform = lifeform.createCopy();
-                            validReproduces[number].fill(newLifeform);
-                            lifeformsThatReproduced.add(newLifeform);
-                            lifeformsThatReproduced.add(lifeform);
-                        }
+                Cell cell = cells[i][j];
+                Lifeform lifeform = cell.getLifeform();
+
+                if (lifeform != null && !lifeformsThatReproduced.contains(lifeform)) {
+
+                    Cell[] validReproduces = findValidReproduces(cell);
+                    int validReproducesLength = validReproduces.length;
+
+                    if (validReproducesLength > 0) {
+
+                        int number = RandomGenerator.nextNumber(validReproducesLength);
+                        Lifeform newLifeform = lifeform.createCopy();
+                        validReproduces[number].fill(newLifeform);
+
+                        lifeformsThatReproduced.add(newLifeform);
+                        lifeformsThatReproduced.add(lifeform);
                     }
                 }
             }
-
-            index++;
         }
     }
 
