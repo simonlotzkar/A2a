@@ -4,7 +4,7 @@ public class Plant extends Lifeform implements Herbedible {
         reproduceMoves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
         reproduceMates = 4;
         reproduceSpace = 3;
-        id = idNumber + "";
+        id = idNumber + "P";
         idNumber++;
     }
 

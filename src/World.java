@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class World {
@@ -59,7 +60,7 @@ public class World {
     // finds each cell that is (x+/-n or y+/-n) away from the current cell, where n is the first entry in a move's
     // array; then if the array contains another entry it moves in the opposite dimension that it did before.
     private Set<Cell> findDestinations(Cell origin, Move[] moves) {
-        Set<Cell> validDestinations = new HashSet<>();
+        Set<Cell> validDestinations = new LinkedHashSet<>();
         int row = 0;
         int col = 0;
         for (int i = 0; i < height; i++) {
