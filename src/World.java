@@ -3,12 +3,24 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * A two-dimensional game world comprised of cells with lifeforms.
+ */
 public class World {
+    // 2D Array of cells that makes the world.
     private final Cell[][] cells;
+
+    // The horizontal size of the world, or the column length.
     private final int width;
+
+    // The vertical size of the world, or the row length.
     private final int height;
 
-    //Initializes cells = Cell[width][height] then iterates over the array and initializes each cell using the generate(Cell) method.
+    /**
+     * Creates the world's cells array of the given dimensions then iterates through it and initializes each cell.
+     * @param width to set the world's width to.
+     * @param height to set the world's height to.
+     */
     public World(int width, int height) {
         this.width = width;
         this.height = height;
@@ -20,7 +32,13 @@ public class World {
         }
     }
 
-    //Creates a new Cell. then uses RandomGenerator to generate a number between 0 and 99. Value >=85 calls fill(Herbivore) on cell, value >=65 calls fill(Plant) on cell.
+    /**
+     * Creates a new cell using RandomGenerator to pick a number from 1-100 for its contents:
+     *     100-85 (15%) results in a herbivore cell,
+     *     84-65  (20%) results in a plant cell,
+     *     64-1   (65%) results in an empty cell.
+     * @return the cell created and filled.
+     */
     private Cell generate() {
         Cell cell = new Cell();
         int number = RandomGenerator.nextNumber(100);
@@ -32,7 +50,10 @@ public class World {
         return cell;
     }
 
-    //returns an array of all cells in the 2d array.
+    /**
+     * Returns a 1D array of all cells in the world.
+     * @return a 1D array of all cells in the world.
+     */
     public Cell[] getCellsArray() {
         Cell[] cells1D = new Cell[width * height];
         int index = 0;
@@ -43,10 +64,13 @@ public class World {
         return cells1D;
     }
 
-    // finds each cell that is (x+/-n or y+/-n) away from the current cell, where n is the first entry in a move's
-    // array; then if the array contains another entry it moves in the opposite dimension that it did before.
-    private Set<Cell> findDestinations(Cell origin, Move[] moves) {
-        Set<Cell> validDestinations = new LinkedHashSet<>();
+    /**
+     * Returns a set of cells that are reached using the given moves from the given cell (origin).
+     * @param origin the cell to generate the destinations from.
+     * @param moves the moves to generate the destinations with.
+     * @return a set of cells that are reached using the given moves from the given cell (origin).
+     */
+    private Set<Cell> findValidMoves(Cell origin, Move[] moves) {
         int row = 0;
         int col = 0;
         for (int i = 0; i < height; i++) {
@@ -57,44 +81,77 @@ public class World {
                 }
             }
         }
+        return findValidDestinations(moves, row, col);
+    }
+
+    /**
+     * Returns a set of valid destinations that can be reached from the given location using the given moves.
+     * @param moves to find valid destinations with.
+     * @param row vertical location for finding valid destinations.
+     * @param col horizontal location for finding valid destinations.
+     * @return a set of valid destinations that can be reached from the given location using the given moves.
+     */
+    private Set<Cell> findValidDestinations(Move[] moves, int row, int col) {
+        Set<Cell> validDestinations = new LinkedHashSet<>();
         for (Move m : moves) {
             int stepLength = m.getMovement().getSteps().length;
             if (stepLength == 1) {
-                int step = m.getMovement().getSteps()[0] * m.getMagnitude();
-                for (int i = -1; i < 2; i++) {
-                    if (i != 0) {
-                        if (isWithinWorld(row + step * i, col)) {
-                            validDestinations.add(cells[row + step * i][col]);
-                        }
-                        if (isWithinWorld(row, col + step * i)) {
-                            validDestinations.add(cells[row][col + step * i]);
-                        }
-                    }
-                }
+                addValidDestinations1D(validDestinations, m, row, col);
             } else if (stepLength == 2) {
-                int step0 = m.getMovement().getSteps()[0] * m.getMagnitude();
-                int step1 = m.getMovement().getSteps()[1] * m.getMagnitude();
-                for (int i = -1; i < 2; i++) {
-                    for (int j = -1; j < 2; j++) {
-                        if (i != 0 && j != 0) {
-                            if (isWithinWorld(row + step0 * i, col + step1 * j)) {
-                                validDestinations.add(cells[row + step0 * i][col + step1 * j]);
-                            }
-                            if (isWithinWorld(row + step1 * j, col + step0 * i)) {
-                                validDestinations.add(cells[row + step1 * j][col + step0 * i]);
-                            }
-                        }
-                    }
-                }
+                addValidDestinations2D(validDestinations, m, row, col);
             }
         }
         return validDestinations;
     }
 
-    // iterates through each cell times times and if it has a lifeform, creates an array using findValidMoves(cell).
-    // then, uses RandomGenerator to pick a random cell in the array of valid destinations. then calls the original
-    // cell lifeform's eat() function with the chosen destination's contents. then calls fill() on the destination
-    // cell using the lifeform in the original cell. then calls clear() on the original cell.
+    /**
+     * Adds all 1-dimensional moves to the set given a move, row, and column.
+     * @param validDestinations set to add valid destinations to.
+     * @param m move to find valid destinations with.
+     * @param row vertical location for finding valid destinations.
+     * @param col horizontal location for finding valid destinations.
+     */
+    private void addValidDestinations1D(Set<Cell> validDestinations, Move m, int row, int col) {
+        int step = m.getMovement().getSteps()[0] * m.getMagnitude();
+        for (int i = -1; i < 2; i++) {
+            if (i != 0) {
+                if (isWithinWorld(row + step * i, col)) {
+                    validDestinations.add(cells[row + step * i][col]);
+                }
+                if (isWithinWorld(row, col + step * i)) {
+                    validDestinations.add(cells[row][col + step * i]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds all 2-dimensional moves to the set given a move, row, and column.
+     * @param validDestinations set to add valid destinations to.
+     * @param m move to find valid destinations with.
+     * @param row vertical location for finding valid destinations.
+     * @param col horizontal location for finding valid destinations.
+     */
+    private void addValidDestinations2D(Set<Cell> validDestinations, Move m, int row, int col) {
+        int step0 = m.getMovement().getSteps()[0] * m.getMagnitude();
+        int step1 = m.getMovement().getSteps()[1] * m.getMagnitude();
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (i != 0 && j != 0) {
+                    if (isWithinWorld(row + step0 * i, col + step1 * j)) {
+                        validDestinations.add(cells[row + step0 * i][col + step1 * j]);
+                    }
+                    if (isWithinWorld(row + step1 * j, col + step0 * i)) {
+                        validDestinations.add(cells[row + step1 * j][col + step0 * i]);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Iterates through each cell in the world and moves their lifeform if possible and only once.
+     */
     public void moveAll() {
         Set<Lifeform> lifeformsThatMoved = new HashSet<>();
         for (int i = 0; i < height; i++) {
@@ -115,15 +172,17 @@ public class World {
         }
     }
 
-    // uses the cell's lifeform's getMoves(), then iterates over each and adds the cells in the array returned by
-    // findDestinations(cell, moves). next, if any of those cells contains a lifeform, they must also pass the
-    // original lifeform's validateEdible(lifeform).
+    /**
+     * Returns an array of cells the given cell's lifeform can move to.
+     * @param cell contains the lifeform that is moving.
+     * @return an array of cells the given cell's lifeform can move to.
+     */
     private Cell[] findValidMoves(Cell cell) {
         Lifeform lifeform = cell.getLifeform();
         ArrayList<Cell> validDestinations = new ArrayList<>();
         Move[] moves = lifeform.getMoves();
         if (moves != null) {
-            Set<Cell> destinations = findDestinations(cell, moves);
+            Set<Cell> destinations = findValidMoves(cell, moves);
             for (Cell destination : destinations) {
                 if (lifeform.validateEdible(destination.getLifeform())) {
                     validDestinations.add(destination);
@@ -133,9 +192,9 @@ public class World {
         return validDestinations.toArray(new Cell[0]);
     }
 
-    // iterates through each cell times times and if it has a lifeform, calls findValidReproduces(cell) then picks one
-    // randomly using randomnumber generator. then calls fill(lifeform) on that cell where lifeform is the same type as
-    // the cell.
+    /**
+     * Iterates through each cell in the world and reproduces their lifeforms if possible and only once.
+     */
     public void reproduceAll() {
         Set<Lifeform> lifeformsThatReproduced = new HashSet<>();
         for (int i = 0; i < height; i++) {
@@ -157,17 +216,18 @@ public class World {
         }
     }
 
-    // uses validateReproduce(mates, space), where mates is found by countSame(cell, 0), and space is found by calling
-    // countSame(Cell, 1). if true, uses the cell's lifeform's getReproduceMoves(), then iterates over each and adds the
-    // cells in the array returned by findDestinations(cell, move) to a new array.
+    /**
+     * Returns an array of cells the given cell's lifeform can reproduce to.
+     * @param cell contains the lifeform that is reproducing.
+     * @return an array of cells the given cell's lifeform can reproduce to.
+     */
     private Cell[] findValidReproduces(Cell cell) {
-        int mates = countNeighbors(cell, 0);
-        int spaces = countNeighbors(cell, 1);
+        int mates = countCellNeighbours(cell, 1);
+        int spaces = countCellNeighbours(cell, 0);
         Lifeform lifeform = cell.getLifeform();
         ArrayList<Cell> validDestinations = new ArrayList<>();
-
         if (lifeform.validateReproduce(mates, spaces)) {
-            Set<Cell> destinations = findDestinations(cell, lifeform.getReproduceMoves());
+            Set<Cell> destinations = findValidMoves(cell, lifeform.getReproduceMoves());
             for (Cell destination : destinations) {
                 if (destination.getLifeform() == null) {
                     validDestinations.add(destination);
@@ -177,47 +237,100 @@ public class World {
         return validDestinations.toArray(new Cell[0]);
     }
 
-    // iterates over the cells surrounding the given cell and counts each that has a lifeform of the same type
-    // if the mode is 0, or each that is null otherwise.
-    private int countNeighbors(Cell cell, int mode) {
-        int count = 0;
+    /**
+     * Iterates through each cell in the world and finds the given cell. Then checks the cells surrounding it and
+     * returns the number of empty cells if the mode is 0; or the number of cells with the same lifeform type of
+     * the given cell's lifeform if the mode is 1; or returns 0 otherwise.
+     * @param cell to count around.
+     * @param mode determines if counting empty neighbours (0); or same neighbours (1).
+     * @return the number of empty cells surrounding the given location if the mode is 0; or the number of cells surrounding the given location with the same lifeform type of the given cell's lifeform if the mode is 1; or 0.
+     */
+    private int countCellNeighbours(Cell cell, int mode) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (cells[i][j] == cell) {
-                    for (int k = -1; k < 2; k++) {
-                        for (int p = -1; p < 2; p++) {
-                            if (!(k == 0 && p == 0) && isWithinWorld(i + k, j + p)) {
-                                Lifeform lifeform = cells[i + k][j + p].getLifeform();
-                                if (mode == 0) {
-                                    if (cell.getLifeform().isSame(lifeform)) {
-                                        count++;
-                                    }
-                                } else {
-                                    if (lifeform == null) {
-                                        count++;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    return countLocationNeighbours(cell, i, j, mode);
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Checks the cells surrounding it and returns the number of empty cells if the mode is 0;
+     * or the number of cells with the same lifeform type of the given cell's lifeform if the mode is 1;
+     * or returns 0 otherwise.
+     * @param cell to check the found cell's lifeform against.
+     * @param row vertical location for finding valid destinations.
+     * @param col horizontal location for finding valid destinations.
+     * @param mode determines if counting empty neighbours (0); or same neighbours (1).
+     * @return the number of empty cells surrounding the given location if the mode is 0; or the number of cells surrounding the given location with the same lifeform type of the given cell's lifeform if the mode is 1; or 0.
+     */
+    private int countLocationNeighbours(Cell cell, int row, int col, int mode) {
+        int count = 0;
+        for (int k = -1; k < 2; k++) {
+            for (int p = -1; p < 2; p++) {
+                if (!(k == 0 && p == 0) && isWithinWorld(row + k, col + p)) {
+                    Lifeform lifeform = cells[row + k][col + p].getLifeform();
+                    count += lifeformCheck(cell, lifeform, mode);
                 }
             }
         }
         return count;
     }
 
+    /**
+     * Returns 1 if the given lifeform is null and the mode is 0, or
+     *              the given lifeform is the same type as the given cell; or
+     * Returns 0.
+     * @param cell to check against the given lifeform if mode is not 0.
+     * @param lifeform to check based on the mode.
+     * @param mode determines if checking null (0); or same as cell (1).
+     * @return 1 if the given lifeform is null and the mode is 0, or the given lifeform is the same type as the given cell; or 0.
+     */
+    private int lifeformCheck(Cell cell, Lifeform lifeform, int mode) {
+        if (mode == 0) {
+            if (lifeform == null) {
+                return 1;
+            }
+        } else if (mode == 1) {
+            if (cell.getLifeform().isSame(lifeform)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Checks if the given coordinate (row and col) is within the bounds of the world.
+     * @param row vertical position to check against height.
+     * @param col horizontal position to check against width.
+     * @return true if the given coordinate (row and col) is within the bounds of the world; false otherwise.
+     */
     private boolean isWithinWorld(int row, int col) {
         return (row >= 0 && col >= 0 && row < height && col < width);
     }
 
+    /**
+     * Returns the 2D array of the world's cells.
+     * @return the 2D array of the world's cells.
+     */
     public Cell[][] getCells() {
         return cells;
     }
 
+    /**
+     * Returns the width of the world.
+     * @return the width of the world.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Returns the height of the world.
+     * @return the height of the world.
+     */
     public int getHeight() {
         return height;
     }

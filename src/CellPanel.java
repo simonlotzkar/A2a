@@ -1,16 +1,27 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Panel that displays a cell and its contents.
+ */
 public class CellPanel extends JPanel {
 
-    JLabel jLabel = new JLabel();
+    // Label for displaying a cell's lifeform's id.
+    JLabel idLabel = new JLabel();
 
+    /**
+     * Creates an empty panel with a border.
+     */
     public CellPanel() {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        add(jLabel);
-        jLabel.setVisible(false);
+        add(idLabel);
+        idLabel.setVisible(false);
     }
 
+    /**
+     * Sets the background and id of the panel based on the lifeform in the given cell.
+     * @param cell that determines the panel's appearance based on its lifeform.
+     */
     public void updatePanel(Cell cell) {
         Lifeform lifeform = cell.getLifeform();
         if (lifeform instanceof Plant) {
@@ -19,11 +30,10 @@ public class CellPanel extends JPanel {
             setBackground(Color.YELLOW);
         } else {
             setBackground(Color.WHITE);
-            jLabel.setVisible(false);
+            idLabel.setVisible(false);
             return;
         }
-
-        jLabel.setText(lifeform.getID());
-        jLabel.setVisible(true);
+        idLabel.setText(lifeform.getID());
+        idLabel.setVisible(true);
     }
 }
