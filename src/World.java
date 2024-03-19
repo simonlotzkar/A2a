@@ -42,10 +42,14 @@ public class World {
     private Cell generate() {
         Cell cell = new Cell();
         int number = RandomGenerator.nextNumber(100);
-        if (number >= 85) {
+        if (number >= 80) {
             cell.fill(new Herbivore());
-        } else if (number >= 65) {
+        } else if (number >= 60) {
             cell.fill(new Plant());
+        }  else if (number >= 50) {
+            cell.fill(new Carnivore());
+        }  else if (number >= 40) {
+            cell.fill(new Omnivore());
         }
         return cell;
     }

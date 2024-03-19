@@ -28,6 +28,10 @@ public class CellPanel extends JPanel {
             setBackground(Color.GREEN);
         } else if (lifeform instanceof Herbivore) {
             setBackground(Color.YELLOW);
+        } else if (lifeform instanceof Omnivore) {
+            setBackground(Color.BLUE);
+        } else if (lifeform instanceof Carnivore) {
+            setBackground(Color.RED);
         } else {
             setBackground(Color.WHITE);
             idLabel.setVisible(false);

@@ -1,18 +1,21 @@
 /**
- * A lifeform that has a unique ID, moves, hungers, but does not reproduce.
+ * A lifeform that has a unique ID, moves, hungers, and reproduces. Eats carnedible lifeforms.
  */
-public class Herbivore extends Lifeform {
+public class Herbivore extends Lifeform implements Carnedible {
 
     /**
-     * Creates a new herbivore with hungerMax, hungerRate, moves, and a unique id; then increments the idNumber.
+     * Creates a new herbivore with hungerMax, hungerRate, moves, reproduceMates, reproduceSpaces, reproduceMoves,
+     * and a unique id; then increments the idNumber.
      */
     public Herbivore() {
-        hungerMax = 5;
-        moves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
+        hungerMax = 4;
+        moves = new Move[]{
+                new Move(Movement.ADJACENT, 1),
+                new Move(Movement.DIAGONAL, 1)};
 
         reproduceMoves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
         reproduceMates = 1;
-        reproduceSpaces = 4;
+        reproduceSpaces = 2;
 
         if (idNumber < 1000) {
             id = idNumber + "H";
@@ -67,7 +70,7 @@ public class Herbivore extends Lifeform {
     }
 
     /**
-     * From the given cell array (options), randomly chooses a cell.
+     * From the given cell array (options), chooses a random cell that has food, or a random cell if none do.
      * @param options the cell array to choose a move from.
      * @return the cell chosen to move to.
      */
@@ -76,7 +79,7 @@ public class Herbivore extends Lifeform {
 //        ArrayList<Cell> others = new ArrayList<>();
 //        ArrayList<Cell> herbEdibles = new ArrayList<>();
 //        for (Cell c : options) {
-//            if (c.getLifeform() instanceof Herbedible) {
+//            if (validateEdible(c.getLifeform()) && c.getLifeform() != null) {
 //                herbEdibles.add(c);
 //            } else {
 //                others.add(c);

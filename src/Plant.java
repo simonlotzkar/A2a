@@ -8,8 +8,14 @@ public class Plant extends Lifeform implements Herbedible {
      * then increments the idNumber.
      */
     public Plant() {
-        reproduceMoves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
-        reproduceMates = 3;
+        reproduceMoves = new Move[]{
+                new Move(Movement.ADJACENT, 1),
+                new Move(Movement.DIAGONAL, 1),
+                new Move(Movement.ADJACENT, 2),
+                new Move(Movement.DIAGONAL, 2),
+                new Move(Movement.ADJACENT, 3),
+                new Move(Movement.DIAGONAL, 3)};
+        reproduceMates = 2;
         reproduceSpaces = 3;
         if (idNumber > 999) {
             id = idNumber + "";
