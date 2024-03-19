@@ -9,6 +9,11 @@ public class Herbivore extends Lifeform {
     public Herbivore() {
         hungerMax = 5;
         moves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
+
+        reproduceMoves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
+        reproduceMates = 1;
+        reproduceSpaces = 4;
+
         if (idNumber < 1000) {
             id = idNumber + "H";
         } else {
@@ -17,10 +22,8 @@ public class Herbivore extends Lifeform {
         idNumber++;
     }
 
-    //increments hunger by hungerRate. if hunger >= hungerMax, returns false; otherwise true.
-
     /**
-     * Increments hunger by the hungerRate, then checks if the herbivore starved or not.
+     * Increments hunger by one, then checks if the herbivore starved or not.
      * @return false if the herbivore starved, true otherwise.
      */
     @Override
@@ -51,14 +54,16 @@ public class Herbivore extends Lifeform {
     }
 
     /**
-     * Returns false because herbivores do not reproduce.
-     * @param mates does nothing.
-     * @param space does nothing.
-     * @return false.
+     * Checks if the organism can reproduce given the number of mates and spaces next to it, and whether it's half full
+     * or more.
+     * @param mates checks if equal to reproduceMates.
+     * @param space checks if greater or equal to reproduceSpaces.
+     * @return true if mates and spaces are greater or equal to reproduceMates and reproduceSpaces, and hunger is half
+     * or less than the hunger max; false otherwise.
      */
     @Override
     public boolean validateReproduce(int mates, int space) {
-        return false;
+        return mates == reproduceMates && space >= reproduceSpaces && hunger <= (hungerMax / 2);
     }
 
     /**
@@ -96,11 +101,14 @@ public class Herbivore extends Lifeform {
     }
 
     /**
-     * Creates a new herbivore.
-     * @return a new herbivore.
+     * Increases this herbivore's hunger by a quarter of their hungerMax, then returns a new herbivore that is 25% full.
+     * @return a new herbivore with hunger equal to 75% of their hungerMax.
      */
     @Override
     public Lifeform createCopy() {
-        return new Herbivore();
+        hunger += (hungerMax / 4);
+        Herbivore baby = new Herbivore();
+        baby.hunger = hungerMax - (hungerMax / 4);
+        return baby;
     }
 }

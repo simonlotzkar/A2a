@@ -9,7 +9,7 @@ public class Plant extends Lifeform implements Herbedible {
      */
     public Plant() {
         reproduceMoves = new Move[]{new Move(Movement.ADJACENT, 1), new Move(Movement.DIAGONAL, 1)};
-        reproduceMates = 4;
+        reproduceMates = 3;
         reproduceSpaces = 3;
         if (idNumber > 999) {
             id = idNumber + "";
