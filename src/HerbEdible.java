@@ -1,5 +1,5 @@
 /**
  * Indicates a lifeform is edible by herbivores.
  */
-public interface Herbedible extends Edible {
+public interface HerbEdible extends Edible {
 }

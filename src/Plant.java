@@ -1,7 +1,7 @@
 /**
  * A lifeform that has a unique ID, reproduces, but does not hunger or move.
  */
-public class Plant extends Lifeform implements Herbedible {
+public class Plant extends Lifeform implements HerbEdible, OmniEdible {
 
     /**
      * Creates a new plant with reproduceMoves, reproduceMates, reproduceSpaces, and a unique id;
@@ -12,11 +12,9 @@ public class Plant extends Lifeform implements Herbedible {
                 new Move(Movement.ADJACENT, 1),
                 new Move(Movement.DIAGONAL, 1),
                 new Move(Movement.ADJACENT, 2),
-                new Move(Movement.DIAGONAL, 2),
-                new Move(Movement.ADJACENT, 3),
-                new Move(Movement.DIAGONAL, 3)};
-        reproduceMates = 2;
-        reproduceSpaces = 3;
+                new Move(Movement.DIAGONAL, 2)};
+        reproduceMates = 1;
+        reproduceSpaces = 2;
         if (idNumber > 999) {
             id = idNumber + "";
         } else {

@@ -1,14 +1,14 @@
 /**
  * A lifeform that has a unique ID, moves, hungers, and reproduces. Eats carnedible lifeforms.
  */
-public class Herbivore extends Lifeform implements Carnedible {
+public class Herbivore extends Lifeform implements CarnEdible, OmniEdible {
 
     /**
      * Creates a new herbivore with hungerMax, hungerRate, moves, reproduceMates, reproduceSpaces, reproduceMoves,
      * and a unique id; then increments the idNumber.
      */
     public Herbivore() {
-        hungerMax = 4;
+        hungerMax = 5;
         moves = new Move[]{
                 new Move(Movement.ADJACENT, 1),
                 new Move(Movement.DIAGONAL, 1)};
@@ -42,7 +42,7 @@ public class Herbivore extends Lifeform implements Carnedible {
      */
     @Override
     public boolean validateEdible(Lifeform food) {
-        return food instanceof Herbedible || food == null;
+        return food instanceof HerbEdible || food == null;
     }
 
     /**
@@ -66,11 +66,11 @@ public class Herbivore extends Lifeform implements Carnedible {
      */
     @Override
     public boolean validateReproduce(int mates, int space) {
-        return mates == reproduceMates && space >= reproduceSpaces && hunger <= (hungerMax / 2);
+        return mates >= reproduceMates && space >= reproduceSpaces;
     }
 
     /**
-     * From the given cell array (options), chooses a random cell that has food, or a random cell if none do.
+     * From the given cell array (options), randomly chooses a cell.
      * @param options the cell array to choose a move from.
      * @return the cell chosen to move to.
      */
@@ -104,12 +104,11 @@ public class Herbivore extends Lifeform implements Carnedible {
     }
 
     /**
-     * Increases this herbivore's hunger by a quarter of their hungerMax, then returns a new herbivore that is 25% full.
+     * Returns a new herbivore that is 25% full.
      * @return a new herbivore with hunger equal to 75% of their hungerMax.
      */
     @Override
     public Lifeform createCopy() {
-        hunger += (hungerMax / 4);
         Herbivore baby = new Herbivore();
         baby.hunger = hungerMax - (hungerMax / 4);
         return baby;
