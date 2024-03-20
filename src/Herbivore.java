@@ -1,5 +1,6 @@
 /**
- * A lifeform that has a unique ID, moves, hungers, and reproduces. Eats carnedible lifeforms.
+ * A lifeform that has a unique ID, moves up to 1 space in any direction, hungers, and
+ * reproduces up to 1 space in any direction. Eats HerbEdible lifeforms.
  */
 public class Herbivore extends Lifeform implements CarnEdible, OmniEdible {
 
@@ -57,12 +58,10 @@ public class Herbivore extends Lifeform implements CarnEdible, OmniEdible {
     }
 
     /**
-     * Checks if the organism can reproduce given the number of mates and spaces next to it, and whether it's half full
-     * or more.
+     * Checks if the organism can reproduce given the number of mates and spaces next to it.
      * @param mates checks if equal to reproduceMates.
      * @param space checks if greater or equal to reproduceSpaces.
-     * @return true if mates and spaces are greater or equal to reproduceMates and reproduceSpaces, and hunger is half
-     * or less than the hunger max; false otherwise.
+     * @return true if mates and spaces are greater or equal to reproduceMates and reproduceSpaces; false otherwise.
      */
     @Override
     public boolean validateReproduce(int mates, int space) {
@@ -76,20 +75,6 @@ public class Herbivore extends Lifeform implements CarnEdible, OmniEdible {
      */
     @Override
     public Cell chooseMove(Cell[] options) {
-//        ArrayList<Cell> others = new ArrayList<>();
-//        ArrayList<Cell> herbEdibles = new ArrayList<>();
-//        for (Cell c : options) {
-//            if (validateEdible(c.getLifeform()) && c.getLifeform() != null) {
-//                herbEdibles.add(c);
-//            } else {
-//                others.add(c);
-//            }
-//        }
-//        if (!herbEdibles.isEmpty()) {
-//            return herbEdibles.get(RandomGenerator.nextNumber(herbEdibles.size()));
-//        } else {
-//            return others.get(RandomGenerator.nextNumber(others.size()));
-//        }
         return options[RandomGenerator.nextNumber(options.length)];
     }
 

@@ -1,5 +1,6 @@
 /**
- * A lifeform that has a unique ID, moves, hungers, and reproduce. Eats lifeforms that are carnedible.
+ * A lifeform that has a unique ID, moves up to 1 space in any direction, hungers, and
+ * reproduces up to 1 space in any direction. Eats lifeforms that are CarnEdible.
  */
 public class Carnivore extends Lifeform implements OmniEdible {
 

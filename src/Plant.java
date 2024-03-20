@@ -1,5 +1,5 @@
 /**
- * A lifeform that has a unique ID, reproduces, but does not hunger or move.
+ * A lifeform that has a unique ID, reproduces up to 2 spaces away in any direction, but does not hunger or move.
  */
 public class Plant extends Lifeform implements HerbEdible, OmniEdible {
 
@@ -15,10 +15,10 @@ public class Plant extends Lifeform implements HerbEdible, OmniEdible {
                 new Move(Movement.DIAGONAL, 2)};
         reproduceMates = 1;
         reproduceSpaces = 2;
-        if (idNumber > 999) {
-            id = idNumber + "";
-        } else {
+        if (idNumber < 1000) {
             id = idNumber + "P";
+        } else {
+            id = idNumber + "";
         }
         idNumber++;
     }

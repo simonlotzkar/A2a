@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 
 /**
- * A lifeform that has a unique ID, moves, hungers, and reproduce. Eats lifeforms that are omniedible.
+ * A lifeform that has a unique ID, moves up to 1 space in any direction, hungers, and
+ * reproduces up to 1 space in any direction. Eats lifeforms that are OmniEdible.
  */
 public class Omnivore extends Lifeform implements CarnEdible {
 
@@ -68,23 +69,23 @@ public class Omnivore extends Lifeform implements CarnEdible {
     }
 
     /**
-     * From the given cell array (options), randomly chooses a cell.
+     * From the given cell array (options), chooses a random cell that has food, or a random cell if none do.
      * @param options the cell array to choose a move from.
      * @return the cell chosen to move to.
      */
     @Override
     public Cell chooseMove(Cell[] options) {
         ArrayList<Cell> others = new ArrayList<>();
-        ArrayList<Cell> herbEdibles = new ArrayList<>();
+        ArrayList<Cell> omniEdibles = new ArrayList<>();
         for (Cell c : options) {
             if (c.getLifeform() instanceof OmniEdible) {
-                herbEdibles.add(c);
+                omniEdibles.add(c);
             } else {
                 others.add(c);
             }
         }
-        if (!herbEdibles.isEmpty()) {
-            return herbEdibles.get(RandomGenerator.nextNumber(herbEdibles.size()));
+        if (!omniEdibles.isEmpty()) {
+            return omniEdibles.get(RandomGenerator.nextNumber(omniEdibles.size()));
         } else {
             return others.get(RandomGenerator.nextNumber(others.size()));
         }
